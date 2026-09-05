@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador y Generador de Flyers IMPO - Tolepu Perú</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #800080;
+            --primary-dark: #5a005a;
+            --primary-light: #f4e8f4;
+            --secondary-color: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --accent-color: #25d366;
+            --outlook-color: #0078d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1450px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-logo {
+            max-height: 50px;
+            background: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 992px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 14px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .config-box {
+            background: var(--primary-light);
+            border: 1px solid #d8b2d8;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .checkbox-group input {
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn:hover { background: var(--primary-dark); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; width: auto; }
+        .btn-whatsapp { background: var(--accent-color); }
+        .btn-whatsapp:hover { background: #20ba5a; }
+        .btn-outlook { background: var(--outlook-color); }
+        .btn-outlook:hover { background: #005a9e; }
+        .btn-danger { background: #dc3545; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 450px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .flyer-container {
+            background: #ffffff;
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .flyer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .flyer-logo {
+            height: 55px;
+            object-fit: contain;
+        }
+
+        .flyer-title-box {
+            text-align: right;
+        }
+
+        .flyer-title-box h2 {
+            color: var(--primary-color);
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .rates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .rate-card {
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 14px;
+            background: #fafafa;
+            position: relative;
+        }
+
+        .rate-card-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 13px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 4px;
+        }
+
+        .price-box-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .rate-price-tag {
+            background: linear-gradient(135deg, var(--primary-light), #ebd1eb);
+            border: 1px solid #d8b2d8;
+            color: var(--primary-dark);
+            padding: 10px 6px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            letter-spacing: 0.3px;
+        }
+
+        .rate-info-container {
+            background: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+
+        .rate-info-line {
+            font-size: 11px;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+            color: #444;
+            line-height: 1.3;
+        }
+
+        .rate-info-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .charges-breakdown-box {
+            background: #eef2f7;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #334155;
+        }
+
+        .charges-breakdown-box ul {
+            margin-left: 15px;
+            margin-top: 2px;
+        }
+
+        .notes-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #5d4037;
+        }
+
+        .general-notes-bottom {
+            background: #fdf8fd;
+            border: 1px solid #e2cce2;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 11px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .general-notes-bottom h4 {
+            color: var(--primary-color);
+            font-size: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .general-notes-bottom ul {
+            margin-left: 15px;
+            margin-top: 4px;
+        }
+
+        .flyer-footer {
+            background: var(--primary-light);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #444;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>TOLEPU PERÚ - COTIZADOR IMPO</h1>
+            <p>Importación Marítima Global - Callao (Flete All-In o Flete Base + Gastos de Línea + Gastos Locales)</p>
+        </div>
+        <img src="https://i.postimg.cc/NyNZyhXm/tolepu.png" crossorigin="anonymous" alt="Tolepu Perú Logo" class="header-logo">
+    </header>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="card">
+                <div class="card-title">1. Filtros Globales</div>
+                <div class="form-group">
+                    <label for="selectPestana">Pestaña / Región</label>
+                    <select id="selectPestana" class="form-control" onchange="onPestanaChange()">
+                        <option value="">-- Todas las Pestañas --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="selectPais">País</label>
+                    <select id="selectPais" class="form-control" onchange="onPaisChange()">
+                        <option value="">-- Todos los Países --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="selectPol">Puerto de Origen (POL)</label>
+                    <select id="selectPol" class="form-control" onchange="filterData()">
+                        <option value="">-- Todos los Puertos --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="selectLinea">Naviera</label>
+                    <select id="selectLinea" class="form-control" onchange="filterData()">
+                        <option value="">-- Todas las Navieras --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">2. Configuración Comercial</div>
+                <div class="config-box">
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label for="inputProfitTolepu">Profit Tolepu Adicional ($):</label>
+                        <input type="number" id="inputProfitTolepu" class="form-control" value="0" oninput="onCommercialConfigChange()">
+                    </div>
+                    <div class="row-2" style="margin-bottom: 8px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="inputConceptoOtros">Concepto Otros:</label>
+                            <input type="text" id="inputConceptoOtros" class="form-control" value="Extras" placeholder="Ej. Seguro" oninput="onCommercialConfigChange()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="inputMontoOtros">Monto Otros ($):</label>
+                            <input type="number" id="inputMontoOtros" class="form-control" value="0" oninput="onCommercialConfigChange()">
+                        </div>
+                    </div>
+                    <hr style="border:0; border-top:1px solid #d8b2d8; margin:8px 0;">
+                    <div class="checkbox-group" style="margin-bottom: 6px;">
+                        <label for="chkAllIn"><strong>Flete All-In (Suma Flete + THC + BL + Profits base)</strong></label>
+                        <input type="checkbox" id="chkAllIn" checked onchange="onCommercialConfigChange()">
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 6px;">
+                        <label for="chkGateIn">Incluir Gate-In (Gastos Locales)</label>
+                        <input type="checkbox" id="chkGateIn" checked onchange="onCommercialConfigChange()">
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 6px;">
+                        <label for="chkVoBo">Incluir Visto Bueno / VB° (Gastos Locales)</label>
+                        <input type="checkbox" id="chkVoBo" checked onchange="onCommercialConfigChange()">
+                    </div>
+                    <div class="checkbox-group" style="margin-top: 6px;">
+                        <label for="chkNotes">Mostrar Notas Importantes Abajo</label>
+                        <input type="checkbox" id="chkNotes" checked onchange="onCommercialConfigChange()">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label for="inputEditableNotes">Notas Adicionales / Editables para Correo:</label>
+                    <textarea id="inputEditableNotes" class="form-control" rows="3" placeholder="Escribe aquí notas o comentarios adicionales para el correo..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <span>Tarifario Consolidado (América, Europa y Asia-Medio Oriente)</span>
+                    <button class="btn btn-sm btn-success" onclick="addAllFilteredQuotes()">⚡ Añadir Todos (Filtro Actual)</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Región / Pestaña</th>
+                                <th>País / POL</th>
+                                <th>Naviera</th>
+                                <th>20'ST</th>
+                                <th>40'HQ</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ratesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Flyer Oficial de Importación</span>
+                    <button class="btn btn-sm btn-danger" onclick="clearSelectedQuotes()">Limpiar Todo</button>
+                </div>
+
+                <div id="flyerToExport" class="flyer-container">
+                    <div class="flyer-header">
+                        <img src="https://i.postimg.cc/NyNZyhXm/tolepu.png" crossorigin="anonymous" alt="Tolepu Perú" class="flyer-logo">
+                        <div class="flyer-title-box">
+                            <h2>TARIFARIO DE IMPORTACIÓN MARÍTIMA</h2>
+                            <p>Destino: Callao, Perú</p>
+                        </div>
+                    </div>
+
+                    <div id="selectedQuotesContainer" class="rates-grid">
+                        <p style="font-size: 13px; color: #777; grid-column: 1/-1; text-align: center; padding: 20px;">
+                            Selecciona una o varias tarifas del listado para agregarlas al flyer.
+                        </p>
+                    </div>
+
+                    <div id="generalNotesContainer"></div>
+
+                    <div class="flyer-footer">
+                        <p style="margin-top: 4px; font-weight: bold;" id="glosaFooterDynamic">• Tarifa incluye: Flete marítimo + THCD + Emisión de BL.</p>
+                        <p style="margin-top: 6px; font-weight: bold; color: var(--primary-color);">www.tolepuperu.com.pe | Redes: @tolepuperu</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 15px;">
+                    <button class="btn" onclick="downloadFlyerImage()">📸 Descargar Flyer (PNG)</button>
+                    <button class="btn btn-whatsapp" onclick="sendWhatsAppImage()">💬 Enviar Imagen por WhatsApp</button>
+                    <button class="btn btn-outlook" onclick="sendOutlookEmail()">📧 Enviar por Outlook (Correo)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ratesData = [
+        // ================= AMÉRICA =================
+        { pestana: "AMÉRICA", pais: "BRASIL", pol: "SANTOS", pod: "CALLAO", naviera: "MSC", flete_20: "2801.0", flete_40: "3450.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "18.0", vigencia: "2026-09-30", tt: "38", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "BRASIL", pol: "RIO GRANDE", pod: "CALLAO", naviera: "MAERSK", flete_20: "2755.0", flete_40: "3320.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "110.0", bl_destino: "55.00", gate_in: "279.66", vobo: "338.66", dias_libres_origen: "14.0", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "17", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "BRASIL", pol: "ITAJAÍ", pod: "CALLAO", naviera: "CMA CGM", flete_20: "2700.0", flete_40: "3300.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "114.0", bl_destino: "55.00", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "20", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "BRASIL", pol: "PARANAGUÁ", pod: "CALLAO", naviera: "MSC", flete_20: "2750.0", flete_40: "3400.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "19", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "BRASIL", pol: "ITAPOÁ", pod: "CALLAO", naviera: "HAPAG LLOYD", flete_20: "2720.0", flete_40: "3350.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "95.0", bl_destino: "66.00", gate_in: "265.50", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "18", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "BRASIL", pol: "RIO DE JANEIRO", pod: "CALLAO", naviera: "MSC", flete_20: "2780.0", flete_40: "3420.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "21", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+
+        { pestana: "AMÉRICA", pais: "CHILE", pol: "SAN ANTONIO", pod: "CALLAO", naviera: "MSC", flete_20: "650.0", flete_40: "950.0", telex: "-", profit_agente: "30.0", profit_tolepu: "30.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "5", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+
+        { pestana: "AMÉRICA", pais: "COLOMBIA", pol: "BUENAVENTURA", pod: "CALLAO", naviera: "CMA CGM", flete_20: "800.0", flete_40: "1200.0", telex: "-", profit_agente: "40.0", profit_tolepu: "40.0", origin_charges: "-", thcd: "114.0", bl_destino: "55.00", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "7", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "COLOMBIA", pol: "CARTAGENA", pod: "CALLAO", naviera: "HAPAG LLOYD", flete_20: "950.0", flete_40: "1400.0", telex: "-", profit_agente: "40.0", profit_tolepu: "40.0", origin_charges: "-", thcd: "95.0", bl_destino: "66.00", gate_in: "265.50", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "9", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "COLOMBIA", pol: "BARRANQUILLA", pod: "CALLAO", naviera: "MSC", flete_20: "980.0", flete_40: "1450.0", telex: "-", profit_agente: "40.0", profit_tolepu: "40.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "10", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+
+        { pestana: "AMÉRICA", pais: "GUATEMALA", pol: "PUERTO QUETZAL", pod: "CALLAO", naviera: "CMA CGM", flete_20: "1100.0", flete_40: "1600.0", telex: "-", profit_agente: "40.0", profit_tolepu: "40.0", origin_charges: "-", thcd: "114.0", bl_destino: "55.00", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "12", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+
+        { pestana: "AMÉRICA", pais: "MÉXICO", pol: "MANZANILLO", pod: "CALLAO", naviera: "HAPAG LLOYD", flete_20: "1050.0", flete_40: "1550.0", telex: "-", profit_agente: "40.0", profit_tolepu: "40.0", origin_charges: "-", thcd: "95.0", bl_destino: "66.00", gate_in: "265.50", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "14", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA: Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "MIAMI", pod: "CALLAO", naviera: "ZIM", flete_20: "1150.0", flete_40: "1650.0", telex: "59.0", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "108.0", bl_destino: "59.00", gate_in: "247.80", vobo: "448.40", dias_libres_origen: "-", dias_libres_destino: "10.0", vigencia: "2026-09-30", tt: "12", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "HOUSTON", pod: "CALLAO", naviera: "MSC", flete_20: "1250.0", flete_40: "1750.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "14", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "NEW YORK", pod: "CALLAO", naviera: "CMA CGM", flete_20: "1300.0", flete_40: "1850.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "114.0", bl_destino: "55.00", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "16", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "NEWARK", pod: "CALLAO", naviera: "CMA CGM", flete_20: "1300.0", flete_40: "1850.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "114.0", bl_destino: "55.00", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "16", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "BALTIMORE", pod: "CALLAO", naviera: "HAPAG LLOYD", flete_20: "1320.0", flete_40: "1880.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "95.0", bl_destino: "66.00", gate_in: "265.50", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "17", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "LOS ANGELES", pod: "CALLAO", naviera: "COSCO", flete_20: "1100.0", flete_40: "1600.0", telex: "60.0", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "86.0", bl_destino: "0.00", gate_in: "233.05", vobo: "236.00", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "20", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+        { pestana: "AMÉRICA", pais: "ESTADOS UNIDOS", pol: "LONG BEACH", pod: "CALLAO", naviera: "COSCO", flete_20: "1100.0", flete_40: "1600.0", telex: "60.0", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "86.0", bl_destino: "0.00", gate_in: "233.05", vobo: "236.00", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "20", notas: "-", nota_general: "NOTAS IMPORTANTES - AMÉRICA (ESTADOS UNIDOS): Tarifas sujetas a espacio y disponibilidad de equipos en origen." },
+
+        // ================= EUROPA =================
+        { pestana: "EUROPA", pais: "ALEMANIA", pol: "HAMBURGO", pod: "CALLAO", naviera: "CMA CGM", flete_20: "650.0", flete_40: "1250.0", telex: "60.0", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "114.0", bl_destino: "64.90", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-15", tt: "31", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ESPAÑA", pol: "BARCELONA", pod: "CALLAO", naviera: "MSC", flete_20: "1437.0", flete_40: "2265.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "33", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ESPAÑA", pol: "VALENCIA", pod: "CALLAO", naviera: "MSC", flete_20: "1437.0", flete_40: "2265.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "33", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ESPAÑA", pol: "BILBAO", pod: "CALLAO", naviera: "HAPAG LLOYD", flete_20: "1480.0", flete_40: "2300.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "95.0", bl_destino: "66.00", gate_in: "265.50", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "35", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ITALIA", pol: "GÉNOVA", pod: "CALLAO", naviera: "MSC", flete_20: "1500.0", flete_40: "2400.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "30", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ITALIA", pol: "LIVORNO", pod: "CALLAO", naviera: "CMA CGM", flete_20: "1520.0", flete_40: "2420.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "114.0", bl_destino: "55.00", gate_in: "253.70", vobo: "322.14", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "32", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ITALIA", pol: "LA SPEZIA", pod: "CALLAO", naviera: "MSC", flete_20: "1500.0", flete_40: "2400.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "31", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "ITALIA", pol: "CIVITAVECCHIA", pod: "CALLAO", naviera: "MSC", flete_20: "1530.0", flete_40: "2450.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "57.00", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "33", notas: "-", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "TURQUÍA", pol: "ESTAMBUL", pod: "CALLAO", naviera: "MSC", flete_20: "1800.0", flete_40: "2700.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "38", notas: "Vía Logisturk", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "TURQUÍA", pol: "IZMIT", pod: "CALLAO", naviera: "MSC", flete_20: "1800.0", flete_40: "2700.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "38", notas: "Vía Logisturk", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "TURQUÍA", pol: "MERSIN", pod: "CALLAO", naviera: "MSC", flete_20: "1800.0", flete_40: "2700.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "38", notas: "Vía Logisturk", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+        { pestana: "EUROPA", pais: "TURQUÍA", pol: "ALIAGA", pod: "CALLAO", naviera: "MSC", flete_20: "1820.0", flete_40: "2720.0", telex: "-", profit_agente: "50.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "65.0", bl_destino: "67.26", gate_in: "253.70", vobo: "414.18", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "39", notas: "Vía Logisturk", nota_general: "NOTAS IMPORTANTES - EUROPA: Tarifas sujetas a recargos BAF/CAF vigentes a la fecha." },
+
+        // ================= ASIA - MEDIO ORIENTE =================
+        { pestana: "ASIA - MEDIO ORIENTE", pais: "INDIA", pol: "CHENNAI", pod: "CALLAO", naviera: "EVERGREEN", flete_20: "6950.0", flete_40: "7700.0", telex: "75.0", profit_agente: "60.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "97.0", bl_destino: "76.70", gate_in: "209.45", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "21.0", vigencia: "2026-09-14", tt: "70", notas: "-", nota_general: "NOTAS IMPORTANTES - ASIA: Espacios y equipos sujetos a confirmación estricta." },
+        { pestana: "ASIA - MEDIO ORIENTE", pais: "INDIA", pol: "NHAVA SHEVA", pod: "CALLAO", naviera: "EVERGREEN", flete_20: "6950.0", flete_40: "7700.0", telex: "75.0", profit_agente: "60.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "97.0", bl_destino: "76.70", gate_in: "209.45", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "21.0", vigencia: "2026-09-14", tt: "70", notas: "-", nota_general: "NOTAS IMPORTANTES - ASIA: Espacios y equipos sujetos a confirmación estricta." },
+        { pestana: "ASIA - MEDIO ORIENTE", pais: "INDIA", pol: "MUNDRA", pod: "CALLAO", naviera: "HAPAG LLOYD", flete_20: "6800.0", flete_40: "7550.0", telex: "66.0", profit_agente: "60.0", profit_tolepu: "50.0", origin_charges: "-", thcd: "95.0", bl_destino: "66.00", gate_in: "265.50", vobo: "348.10", dias_libres_origen: "-", dias_libres_destino: "14.0", vigencia: "2026-09-30", tt: "68", notas: "-", nota_general: "NOTAS IMPORTANTES - ASIA: Espacios y equipos sujetos a confirmación estricta." }
+    ];
+
+    let selectedQuotesList = [];
+    let currentFilteredData = [];
+
+    window.onload = function() {
+        updateFilterDropdowns();
+        filterData();
+    };
+
+    function updateFilterDropdowns(keepPestana = "", keepPais = "", keepPol = "", keepLinea = "") {
+        const pestanaVal = keepPestana !== "" ? keepPestana : document.getElementById('selectPestana').value;
+        const paisVal = keepPais !== "" ? keepPais : document.getElementById('selectPais').value;
+        const polVal = keepPol !== "" ? keepPol : document.getElementById('selectPol').value;
+        const lineaVal = keepLinea !== "" ? keepLinea : document.getElementById('selectLinea').value;
+
+        const pestanas = [...new Set(ratesData.map(r => r.pestana))].sort();
+        const selectPestana = document.getElementById('selectPestana');
+        selectPestana.innerHTML = '<option value="">-- Todas las Pestañas --</option>';
+        pestanas.forEach(p => selectPestana.add(new Option(p, p)));
+        selectPestana.value = pestanas.includes(pestanaVal) ? pestanaVal : "";
+
+        const paisesFiltered = ratesData.filter(r => !pestanaVal || r.pestana === pestanaVal);
+        const paises = [...new Set(paisesFiltered.map(r => r.pais))].sort();
+        const selectPais = document.getElementById('selectPais');
+        selectPais.innerHTML = '<option value="">-- Todos los Países --</option>';
+        paises.forEach(p => selectPais.add(new Option(p, p)));
+        selectPais.value = paises.includes(paisVal) ? paisVal : "";
+
+        const polFiltered = ratesData.filter(r => {
+            return (!pestanaVal || r.pestana === pestanaVal) && (!paisVal || r.pais === paisVal);
+        });
+        const puertos = [...new Set(polFiltered.map(r => r.pol))].sort();
+        const selectPol = document.getElementById('selectPol');
+        selectPol.innerHTML = '<option value="">-- Todos los Puertos --</option>';
+        puertos.forEach(po => selectPol.add(new Option(po, po)));
+        selectPol.value = puertos.includes(polVal) ? polVal : "";
+
+        const linesFiltered = ratesData.filter(r => {
+            return (!pestanaVal || r.pestana === pestanaVal) && 
+                   (!paisVal || r.pais === paisVal) && 
+                   (!polVal || r.pol === polVal);
+        });
+        const lineas = [...new Set(linesFiltered.map(r => r.naviera))].sort();
+        const selectLinea = document.getElementById('selectLinea');
+        selectLinea.innerHTML = '<option value="">-- Todas las Navieras --</option>';
+        lineas.forEach(l => selectLinea.add(new Option(l, l)));
+        selectLinea.value = lineas.includes(lineaVal) ? lineaVal : "";
+    }
+
+    function onPestanaChange() {
+        updateFilterDropdowns(document.getElementById('selectPestana').value, "", "", "");
+        filterData();
+    }
+
+    function onPaisChange() {
+        updateFilterDropdowns(document.getElementById('selectPestana').value, document.getElementById('selectPais').value, "", "");
+        filterData();
+    }
+
+    function calculateRate(r) {
+        const profitTolepuExtra = Number(document.getElementById('inputProfitTolepu').value) || 0;
+        const montoOtros = Number(document.getElementById('inputMontoOtros').value) || 0;
+        
+        let f20 = r.flete_20 !== '-' ? Number(r.flete_20) : 0;
+        let f40 = r.flete_40 !== '-' ? Number(r.flete_40) : 0;
+        let telex = r.telex !== '-' ? Number(r.telex) : 0;
+        let profAgente = r.profit_agente !== '-' ? Number(r.profit_agente) : 0;
+        let profTolepuBase = r.profit_tolepu !== '-' ? Number(r.profit_tolepu) : 0;
+        let orig = r.origin_charges !== '-' ? Number(r.origin_charges) : 0;
+        let thcd = r.thcd !== '-' ? Number(r.thcd) : 0;
+        let bldest = r.bl_destino !== '-' ? Number(r.bl_destino) : 0;
+
+        const extraAlFlete = profitTolepuExtra + montoOtros;
+        const f20Final = f20 > 0 ? f20 + extraAlFlete : 0;
+        const f40Final = f40 > 0 ? f40 + extraAlFlete : 0;
+
+        const baseAllInExtras = telex + profAgente + profTolepuBase + orig + thcd + bldest;
+
+        const allIn20 = r.flete_20 !== '-' ? (f20Final + baseAllInExtras).toFixed(2) : '-';
+        const allIn40 = r.flete_40 !== '-' ? (f40Final + baseAllInExtras).toFixed(2) : '-';
+
+        const base20Str = r.flete_20 !== '-' ? f20Final.toFixed(2) : '-';
+        const base40Str = r.flete_40 !== '-' ? f40Final.toFixed(2) : '-';
+
+        return { allIn20, allIn40, base20Str, base40Str };
+    }
+
+    function filterData() {
+        const pestana = document.getElementById('selectPestana').value;
+        const pais = document.getElementById('selectPais').value;
+        const pol = document.getElementById('selectPol').value;
+        const linea = document.getElementById('selectLinea').value;
+
+        updateFilterDropdowns(pestana, pais, pol, linea);
+
+        currentFilteredData = ratesData.filter(r => {
+            return (!pestana || r.pestana === pestana) &&
+                   (!pais || r.pais === pais) &&
+                   (!pol || r.pol === pol) &&
+                   (!linea || r.naviera === linea);
+        });
+
+        renderTable(currentFilteredData);
+    }
+
+    function onCommercialConfigChange() {
+        filterData();
+        renderFlyerQuotes();
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('ratesTableBody');
+        tbody.innerHTML = '';
+
+        if(data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay resultados con estos filtros.</td></tr>';
+            return;
+        }
+
+        const isAllIn = document.getElementById('chkAllIn').checked;
+
+        data.forEach((r) => {
+            const index = ratesData.indexOf(r);
+            const calc = calculateRate(r);
+
+            let disp20 = isAllIn ? (calc.allIn20 !== '-' ? '$' + calc.allIn20 : 'N/A') : (calc.base20Str !== '-' ? '$' + calc.base20Str : 'N/A');
+            let disp40 = isAllIn ? (calc.allIn40 !== '-' ? '$' + calc.allIn40 : 'N/A') : (calc.base40Str !== '-' ? '$' + calc.base40Str : 'N/A');
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${r.pestana}</strong></td>
+                <td>${r.pais} / <strong>${r.pol}</strong></td>
+                <td>${r.naviera}</td>
+                <td>${disp20}</td>
+                <td>${disp40}</td>
+                <td><button class="btn btn-sm" onclick="addQuoteToFlyer(${index})">+ Añadir</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function addQuoteToFlyer(index) {
+        const rate = ratesData[index];
+        const exists = selectedQuotesList.some(item => item.rate === rate);
+        if (!exists) {
+            selectedQuotesList.push({ id: Date.now() + Math.random(), rate: rate });
+            renderFlyerQuotes();
+        }
+    }
+
+    function addAllFilteredQuotes() {
+        if (currentFilteredData.length === 0) {
+            alert('No hay tarifas visibles en el filtro actual para añadir.');
+            return;
+        }
+        currentFilteredData.forEach(rate => {
+            const exists = selectedQuotesList.some(item => item.rate === rate);
+            if (!exists) {
+                selectedQuotesList.push({ id: Date.now() + Math.random(), rate: rate });
+            }
+        });
+        renderFlyerQuotes();
+    }
+
+    function removeQuote(id) {
+        selectedQuotesList = selectedQuotesList.filter(q => q.id !== id);
+        renderFlyerQuotes();
+    }
+
+    function clearSelectedQuotes() {
+        selectedQuotesList = [];
+        renderFlyerQuotes();
+    }
+
+    function renderFlyerQuotes() {
+        const container = document.getElementById('selectedQuotesContainer');
+        const notesContainer = document.getElementById('generalNotesContainer');
+        const glosaFooter = document.getElementById('glosaFooterDynamic');
+        container.innerHTML = '';
+        notesContainer.innerHTML = '';
+
+        if (selectedQuotesList.length === 0) {
+            container.innerHTML = `
+                <p style="font-size: 13px; color: #777; grid-column: 1/-1; text-align: center; padding: 20px;">
+                    Selecciona una o varias tarifas del listado para agregarlas al flyer.
+                </p>`;
+            glosaFooter.innerText = "• Tarifa incluye: Flete marítimo + THCD + Emisión de BL.";
+            return;
+        }
+
+        const isAllIn = document.getElementById('chkAllIn').checked;
+        const showGateIn = document.getElementById('chkGateIn').checked;
+        const showVoBo = document.getElementById('chkVoBo').checked;
+        const showNotes = document.getElementById('chkNotes').checked;
+
+        glosaFooter.innerText = "• Tarifa incluye: Flete marítimo + THCD + Emisión de BL.";
+
+        selectedQuotesList.forEach(item => {
+            const r = item.rate;
+            const calc = calculateRate(r);
+            const card = document.createElement('div');
+            card.className = 'rate-card';
+
+            let priceDisplayHtml = '';
+            if (isAllIn) {
+                priceDisplayHtml = `
+                    <div class="price-box-container">
+                        <div class="rate-price-tag">All-In 20'ST<br>${calc.allIn20 !== '-' ? '$' + calc.allIn20 : 'N/A'}</div>
+                        <div class="rate-price-tag">All-In 40'HQ<br>${calc.allIn40 !== '-' ? '$' + calc.allIn40 : 'N/A'}</div>
+                    </div>
+                `;
+            } else {
+                priceDisplayHtml = `
+                    <div class="price-box-container">
+                        <div class="rate-price-tag">Flete 20'ST<br>${calc.base20Str !== '-' ? '$' + calc.base20Str : 'N/A'}</div>
+                        <div class="rate-price-tag">Flete 40'HQ<br>${calc.base40Str !== '-' ? '$' + calc.base40Str : 'N/A'}</div>
+                    </div>
+                `;
+            }
+
+            let diasLibresClean = '-';
+            if (r.dias_libres_destino && r.dias_libres_destino !== '-') {
+                const parsedDays = parseFloat(r.dias_libres_destino);
+                diasLibresClean = isNaN(parsedDays) ? r.dias_libres_destino : `${Math.round(parsedDays)} días`;
+            }
+
+            let lineCharges = [];
+            if (!isAllIn) {
+                if (r.thcd && r.thcd !== '-' && Number(r.thcd) > 0) lineCharges.push(`THCD: $${r.thcd}`);
+                if (r.bl_destino && r.bl_destino !== '-' && Number(r.bl_destino) > 0) lineCharges.push(`Emisión de BL: $${r.bl_destino}`);
+                if (r.telex && r.telex !== '-' && r.telex !== '0') lineCharges.push(`Telex BL: $${r.telex}`);
+                if (r.origin_charges && r.origin_charges !== '-' && r.origin_charges !== '0') lineCharges.push(`Origin Charges: $${r.origin_charges}`);
+            }
+
+            let chargesHtml = '';
+            if (lineCharges.length > 0) {
+                chargesHtml = `
+                    <div class="charges-breakdown-box">
+                        <strong>Gastos de línea:</strong>
+                        <ul>
+                            ${lineCharges.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            let localCharges = [];
+            if (showGateIn && r.gate_in && r.gate_in !== '-') {
+                localCharges.push(`Gate-In (Gastos locales): $${r.gate_in}`);
+            }
+            if (showVoBo && r.vobo && r.vobo !== '-') {
+                localCharges.push(`Visto Bueno / VB° (Gastos locales): $${r.vobo}`);
+            }
+
+            let localHtml = '';
+            if (localCharges.length > 0) {
+                localHtml = `
+                    <div class="charges-breakdown-box" style="background: #fdf4ff; border-color: #d8b2d8;">
+                        <strong>Gastos Locales:</strong>
+                        <ul>
+                            ${localCharges.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            let notesHtml = '';
+            if (r.notas && r.notas !== '-') {
+                notesHtml = `<div class="notes-box">💡 <strong>${r.notas}</strong></div>`;
+            }
+
+            card.innerHTML = `
+                <button class="remove-btn" onclick="removeQuote(${item.id})">✕</button>
+                <div class="rate-card-header">
+                    <span>${r.pais} - POL: ${r.pol}</span>
+                    <span>${r.naviera}</span>
+                </div>
+                
+                ${priceDisplayHtml}
+
+                <div class="rate-info-container">
+                    <div class="rate-info-line"><span>Destino:</span> <strong>${r.pod}</strong></div>
+                    <div class="rate-info-line"><span>Tiempo de tránsito:</span> <strong>${r.tt} días aprox.</strong></div>
+                    <div class="rate-info-line"><span>Días libres destino:</span> <strong>${diasLibresClean}</strong></div>
+                    <div class="rate-info-line"><span>Validez:</span> <strong>${r.vigencia}</strong></div>
+                </div>
+                
+                ${chargesHtml}
+                ${localHtml}
+                ${notesHtml}
+            `;
+
+            container.appendChild(card);
+        });
+
+        if (showNotes) {
+            const activeNotes = [...new Set(selectedQuotesList.map(item => item.rate.nota_general))];
+            if (activeNotes.length > 0) {
+                let bottomNotesHtml = `
+                    <div class="general-notes-bottom">
+                        <h4>Notas Importantes y Condiciones de las Pestañas Seleccionadas:</h4>
+                        <ul>
+                `;
+                activeNotes.forEach(note => {
+                    bottomNotesHtml += `<li style="margin-bottom: 4px;">${note}</li>`;
+                });
+                bottomNotesHtml += `
+                        </ul>
+                    </div>
+                `;
+                notesContainer.innerHTML = bottomNotesHtml;
+            }
+        }
+    }
+
+    function generateFlyerCanvas(callback) {
+        const element = document.getElementById('flyerToExport');
+        const removeBtns = element.querySelectorAll('.remove-btn');
+        removeBtns.forEach(btn => btn.style.display = 'none');
+
+        html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            removeBtns.forEach(btn => btn.style.display = 'flex');
+            callback(canvas);
+        }).catch(err => {
+            console.error('Error al generar la imagen:', err);
+            removeBtns.forEach(btn => btn.style.display = 'flex');
+        });
+    }
+
+    function downloadFlyerImage() {
+        if (selectedQuotesList.length === 0) {
+            alert('Añade al menos una cotización al flyer para descargarlo.');
+            return;
+        }
+        generateFlyerCanvas(canvas => {
+            const link = document.createElement('a');
+            link.download = `Flyer_Tolepu_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    async function sendWhatsAppImage() {
+        if (selectedQuotesList.length === 0) {
+            alert('Añade al menos una cotización al flyer para enviar por WhatsApp.');
+            return;
+        }
+
+        generateFlyerCanvas(async canvas => {
+            canvas.toBlob(async blob => {
+                const file = new File([blob], `Flyer_Tolepu_${Date.now()}.png`, { type: 'image/png' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Tarifario Tolepu Perú',
+                            text: 'Estimado cliente, compartimos nuestro tarifario de importación marítima actualizado.'
+                        });
+                        return;
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            console.log('Share API falló o fue cancelado.', err);
+                        } else {
+                            return;
+                        }
+                    }
+                }
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = file.name;
+                link.click();
+
+                const paisesUnicos = [...new Set(selectedQuotesList.map(item => item.rate.pais))].join(', ');
+                const textMsg = `*TARIFARIO DE IMPORTACIÓN MARÍTIMA - TOLEPU PERÚ*\nPaíses: ${paisesUnicos}\n\nSe ha descargado la imagen del flyer automáticamente en tu equipo. Adjúntala en este chat para enviarla.`;
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textMsg)}`, '_blank');
+            }, 'image/png');
+        });
+    }
+
+    function sendOutlookEmail() {
+        if (selectedQuotesList.length === 0) {
+            alert('Añade al menos una cotización al flyer para enviar por correo.');
+            return;
+        }
+
+        const paisesUnicos = [...new Set(selectedQuotesList.map(item => item.rate.pais))].join(', ');
+        const subject = `Tarifario de Importación Marítima - Tolepu Perú (${paisesUnicos})`;
+        
+        let body = `Estimado cliente,\n\nCompartimos el detalle de nuestra cotización de flete marítimo:\n\n`;
+        body += `DESTINO: Callao, Perú\n`;
+        body += `PAÍSES / ORÍGENES: ${paisesUnicos}\n\n`;
+        
+        const isAllIn = document.getElementById('chkAllIn').checked;
+        const showGateIn = document.getElementById('chkGateIn').checked;
+        const showVoBo = document.getElementById('chkVoBo').checked;
+
+        selectedQuotesList.forEach((item, idx) => {
+            const r = item.rate;
+            const calc = calculateRate(r);
+            body += `--------------------------------------------------\n`;
+            body += `${idx + 1}. País: ${r.pais} | POL: ${r.pol} | Naviera: ${r.naviera}\n`;
+            if(isAllIn) {
+                body += `   • Flete All-In 20'ST: ${calc.allIn20 !== '-' ? '$' + calc.allIn20 : 'N/A'}\n`;
+                body += `   • Flete All-In 40'HQ: ${calc.allIn40 !== '-' ? '$' + calc.allIn40 : 'N/A'}\n`;
+            } else {
+                body += `   • Flete 20'ST: ${calc.base20Str !== '-' ? '$' + calc.base20Str : 'N/A'}\n`;
+                body += `   • Flete 40'HQ: ${calc.base40Str !== '-' ? '$' + calc.base40Str : 'N/A'}\n`;
+            }
+            body += `   • Tiempo de Tránsito (T/T): ${r.tt} días\n`;
+            body += `   • Días Libres Destino: ${r.dias_libres_destino !== '-' ? r.dias_libres_destino + ' días' : '-'}\n`;
+            body += `   • Validez / Vigencia: ${r.vigencia}\n`;
+
+            if (showGateIn && r.gate_in && r.gate_in !== '-') {
+                body += `   • Gate-In (Gastos locales): $${r.gate_in}\n`;
+            }
+            if (showVoBo && r.vobo && r.vobo !== '-') {
+                body += `   • Visto Bueno / VB° (Gastos locales): $${r.vobo}\n`;
+            }
+        });
+
+        body += `--------------------------------------------------\n\n`;
+        body += `GLOSA:\n• Tarifa incluye: Flete marítimo + THCD + Emisión de BL.\n\n`;
+
+        const activeNotes = [...new Set(selectedQuotesList.map(item => item.rate.nota_general))];
+        if (activeNotes.length > 0) {
+            body += `NOTAS IMPORTANTES:\n`;
+            activeNotes.forEach(note => {
+                body += `- ${note}\n`;
+            });
+            body += `\n`;
+        }
+
+        const userExtraNotes = document.getElementById('inputEditableNotes').value.trim();
+        if (userExtraNotes !== "") {
+            body += `OBSERVACIONES ADICIONALES:\n${userExtraNotes}\n\n`;
+        }
+
+        body += `Quedamos a su disposición para cualquier consulta.\n\n`;
+        body += `Atentamente,\nTOLEPU PERÚ\nwww.tolepuperu.com.pe`;
+
+        const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoUrl;
+    }
+</script>
+
+</body>
+</html>
